@@ -1,4 +1,5 @@
 <script lang="ts">
+    let outputPre: HTMLPreElement;
     let segments = [0, 0, 0, 0, 0, 0, 0, 0];
     let segmentsOrder: number[] = [];
 
@@ -14,7 +15,7 @@
     }
 
     const digitTemplate = [
-        [0, 1, 2, 3, 4, 5, 6], // 0
+        [0, 1, 2, 4, 5, 6], // 0
         [2, 5], //1
         [0, 2, 3, 4, 6], //2
         [0, 2, 3, 5, 6], //3
@@ -27,6 +28,7 @@
     ];
 
     function generateDigitMap() {
+        let output = [];
         for (let digit of digitTemplate) {
             let sum = 0;
             for (let el of digit) {
@@ -34,8 +36,14 @@
                 sum += 1 << idx;
             }
 
-            console.log("Sum: ", sum);
+            output.push(sum);
         }
+
+        let dotMod = 1 << segmentsOrder.findIndex((x) => x == 7);
+        let text = `int decDigits[10] = {${output.join(",")}};\nint dotMod = ${dotMod};`;
+
+        console.log(text);
+        outputPre.innerText = text;
     }
 </script>
 
@@ -135,6 +143,12 @@
     First test with this: <br />
     <pre>int decDigits[10] = &#123;1, 2, 4, 8, 16, 32, 64, 128&#125;;</pre>
 </h1>
+
+<h2>
+    Output: <br />
+
+    <pre bind:this={outputPre}></pre>
+</h2>
 
 <style>
     button {
