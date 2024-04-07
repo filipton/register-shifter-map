@@ -1,15 +1,20 @@
 <script lang="ts">
-    let outputPre: HTMLPreElement;
+    import D8Segment from "$lib/D8Segment.svelte";
+    import Highlight from "svelte-highlight";
+    import c from "svelte-highlight/languages/c";
+    import styles from "svelte-highlight/styles/base16-ir-black";
+
+    let outputPre: string = "";
     let segments = [0, 0, 0, 0, 0, 0, 0, 0];
+    let showDot: boolean = true;
     let segmentsOrder: number[] = [];
 
     function changeSegment(i: number) {
         segments[i] = 1;
         segments = segments;
-
         segmentsOrder.push(i);
 
-        if (segmentsOrder.length == 8) {
+        if (segmentsOrder.length == 8 - Number(!showDot)) {
             generateDigitMap();
         }
     }
@@ -30,147 +35,57 @@
     function generateDigitMap() {
         let output = [];
         for (let digit of digitTemplate) {
-            let sum = 0;
-            for (let el of digit) {
-                let idx = segmentsOrder.findIndex((x) => x == el);
-                sum += 1 << idx;
-            }
-
-            output.push(sum);
+            output.push(generateDigit(digit));
         }
 
-        let dotMod = 1 << segmentsOrder.findIndex((x) => x == 7);
-        let text = `int decDigits[10] = {${output.join(",")}};\nint dotMod = ${dotMod};`;
+        let text = `int decDigits[10] = {${output.join(",")}};\n`;
+        if (showDot) {
+            let dotMod = 1 << segmentsOrder.findIndex((x) => x == 7);
+            text += `int dotMod = ${dotMod};\n`;
+        }
 
         console.log(text);
-        outputPre.innerText = text;
+        outputPre = text;
+    }
+
+    function generateDigit(template: number[]): number {
+        let sum = 0;
+        for (let el of template) {
+            let idx = segmentsOrder.findIndex((x) => x == el);
+            sum += 1 << idx;
+        }
+
+        return sum;
+    }
+
+    function switchShowDot() {
+        showDot = !showDot;
+        segments = segments.map((_) => 0);
+        segmentsOrder = [];
     }
 </script>
 
-<table>
-    <tr>
-        <td></td>
-        <td style="width: 150px">
-            <button
-                class={segments[0] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(0)}
-            >
-                0
-            </button>
-        </td>
-        <td></td>
-    </tr>
+<svelte:head>
+    {@html styles}
+</svelte:head>
 
-    <tr>
-        <td style="height: 150px">
-            <button
-                class={segments[1] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(1)}
-            >
-                1
-            </button>
-        </td>
-        <td></td>
-        <td style="height: 150px">
-            <button
-                class={segments[2] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(2)}
-            >
-                2
-            </button>
-        </td>
-    </tr>
+<label>
+    With dot (8th segment):
+    <input type="checkbox" checked={showDot} on:change={switchShowDot} />
+</label>
 
-    <tr>
-        <td></td>
-        <td style="width: 150px">
-            <button
-                class={segments[3] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(3)}
-            >
-                3
-            </button>
-        </td>
-        <td></td>
-    </tr>
-
-    <tr>
-        <td style="height: 150px">
-            <button
-                class={segments[4] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(4)}
-            >
-                4
-            </button>
-        </td>
-        <td></td>
-        <td style="height: 150px">
-            <button
-                class={segments[5] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(5)}
-            >
-                5
-            </button>
-        </td>
-    </tr>
-
-    <tr>
-        <td></td>
-        <td style="width: 150px">
-            <button
-                class={segments[6] == 0 ? "" : "clicked"}
-                on:click={() => changeSegment(6)}
-            >
-                6
-            </button>
-        </td>
-        <td></td>
-    </tr>
-</table>
-
-<div
-    style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid black; margin-top: 10px; overflow: hidden;"
->
-    <button
-        class={segments[7] == 0 ? "" : "clicked"}
-        on:click={() => changeSegment(7)}
-    >
-        7
-    </button>
-</div>
+<D8Segment {showDot} {segments} onChangeSegment={(e) => changeSegment(e)} />
 
 <h1>
     First test with this: <br />
-    <pre>int decDigits[10] = &#123;1, 2, 4, 8, 16, 32, 64, 128&#125;;</pre>
+    <Highlight
+        language={c}
+        code="int decDigits[10] = &#123; 1, 2, 4, 8, 16, 32, 65, 128 &#125;;"
+    />
 </h1>
 
 <h2>
     Output: <br />
 
-    <pre bind:this={outputPre}></pre>
+    <Highlight language={c} code={outputPre} />
 </h2>
-
-<style>
-    button {
-        width: 100%;
-        height: 100%;
-        border: none;
-        cursor: pointer;
-    }
-
-    .clicked {
-        background-color: red;
-    }
-
-    table,
-    tr,
-    td {
-        border-collapse: collapse;
-        border: 1px solid black;
-    }
-
-    td {
-        width: 50px;
-        height: 50px;
-    }
-</style>
