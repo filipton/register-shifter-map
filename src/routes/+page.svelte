@@ -80,7 +80,7 @@
     First test with this: <br />
     <Highlight
         language={c}
-        code="int decDigits[10] = &#123; 1, 2, 4, 8, 16, 32, 65, 128 &#125;;"
+        code="int decDigits[10] = &#123; 1, 2, 4, 8, 16, 32, 64, 128 &#125;;"
     />
 </h1>
 
