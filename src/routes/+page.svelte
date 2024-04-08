@@ -3,6 +3,8 @@
     import Highlight from "svelte-highlight";
     import c from "svelte-highlight/languages/c";
     import styles from "svelte-highlight/styles/base16-ir-black";
+    import step1 from "$lib/snippets/step1.c?raw";
+    import step2 from "$lib/snippets/step2.c?raw";
 
     let outputPre: string = "";
     let segments = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -76,16 +78,23 @@
 
 <D8Segment {showDot} {segments} onChangeSegment={(e) => changeSegment(e)} />
 
-<h1>
-    First test with this: <br />
-    <Highlight
-        language={c}
-        code="int decDigits[10] = &#123; 1, 2, 4, 8, 16, 32, 64, 128 &#125;;"
-    />
-</h1>
-
+<h1>Step 1</h1>
 <h2>
-    Output: <br />
+    Upload test code and click at the 8segment display in order:
 
+    <Highlight language={c} code={step1} />
+</h2>
+
+<h1>Output:</h1>
+<h2>
     <Highlight language={c} code={outputPre} />
+</h2>
+
+<h1>Step 2</h1>
+<h2>
+    After getting the decDigits array and dotMod int you can use your display. <br>
+    dotMod is only outputed if 8th segment is selected. <br>
+
+    It can be used like tihs: <br>
+    <Highlight language={c} code={step2} />
 </h2>
