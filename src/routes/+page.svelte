@@ -80,21 +80,21 @@
 
 <h1>Step 1</h1>
 <h2>
-    Upload test code and click at the 8segment display in order:
+    Upload the test code and click on the 8-segment display in order:
 
     <Highlight language={c} code={step1} />
 </h2>
 
 <h1>Output:</h1>
 <h2>
-    <Highlight language={c} code={outputPre} />
+    <Highlight language={c} code={outputPre == "" ? "// GENERATED OUTPUT WILL BE HERE!" : outputPre} />
 </h2>
 
 <h1>Step 2</h1>
 <h2>
-    After getting the decDigits array and dotMod int you can use your display. <br>
-    dotMod is only outputed if 8th segment is selected. <br>
+    After getting the decDigits array and dotMod int you can use your display. <br />
+    dotMod is only visible when the 8th digit is selected. <br /> <br />
 
-    It can be used like tihs: <br>
+    It can be used like this:
     <Highlight language={c} code={step2} />
 </h2>
